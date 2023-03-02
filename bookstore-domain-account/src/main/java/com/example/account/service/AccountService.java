@@ -1,13 +1,15 @@
 package com.example.account.service;
 
 import com.example.account.mapper.ud.AccountUDMapper;
-import org.example.domain.Account;
+import org.example.domain.account.Account;
 import com.example.account.mapper.AccountMapper;
 import org.example.infrastructure.Encryption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class AccountService {
 
     @Autowired

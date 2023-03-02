@@ -1,8 +1,8 @@
 package com.example.account.validation;
 
 import com.example.account.mapper.ud.AccountUDMapper;
-import org.example.domain.Account;
-import org.example.domain.AuthenticAccount;
+import org.example.domain.account.Account;
+import org.example.domain.security.AuthenticAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

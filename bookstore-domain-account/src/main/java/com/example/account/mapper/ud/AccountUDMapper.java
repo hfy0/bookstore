@@ -2,7 +2,7 @@ package com.example.account.mapper.ud;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.example.domain.Account;
+import org.example.domain.account.Account;
 
 import java.util.Collection;
 

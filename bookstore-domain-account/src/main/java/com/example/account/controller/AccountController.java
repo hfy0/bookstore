@@ -4,11 +4,9 @@ import com.example.account.service.AccountService;
 import com.example.account.validation.AuthenticatedAccount;
 import com.example.account.validation.NotConflictAccount;
 import com.example.account.validation.UniqueAccount;
-import org.example.domain.Account;
+import org.example.domain.account.Account;
 import org.example.infrastructure.response.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,7 +17,7 @@ import javax.validation.constraints.AssertTrue;
  * 操作用户资源
  */
 @RestController()
-@RequestMapping("/accounts")
+@RequestMapping("/restful/accounts")
 public class AccountController {
 
     @Autowired
