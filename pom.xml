@@ -11,15 +11,20 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-
-    <groupId>org.example</groupId>
+    <groupId>com.example</groupId>
     <artifactId>bookstore</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
     <modules>
         <module>bookstore-platform-gateway</module>
         <module>bookstore-platform-configuration</module>
         <module>bookstore-platform-registry</module>
+        <module>bookstore-domain-security</module>
+        <module>bookstore-domain-account</module>
+        <module>bookstore-domain-payment</module>
+        <module>bookstore-domain-warehouse</module>
+        <module>bookstore-library-infrastructure</module>
     </modules>
 
     <properties>
