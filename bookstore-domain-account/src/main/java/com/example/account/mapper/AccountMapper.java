@@ -1,6 +1,6 @@
 package com.example.account.mapper;
 
-import org.example.domain.account.Account;
+import com.example.domain.account.Account;
 
 public interface AccountMapper {
     int deleteByPrimaryKey(Integer id);

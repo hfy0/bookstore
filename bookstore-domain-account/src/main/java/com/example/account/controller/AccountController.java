@@ -4,8 +4,8 @@ import com.example.account.service.AccountService;
 import com.example.account.validation.AuthenticatedAccount;
 import com.example.account.validation.NotConflictAccount;
 import com.example.account.validation.UniqueAccount;
-import org.example.domain.account.Account;
-import org.example.infrastructure.response.CommonResponse;
+import com.example.domain.account.Account;
+import com.example.infrastructure.response.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ import javax.validation.constraints.AssertTrue;
  * 操作用户资源
  */
 @RestController()
-@RequestMapping("/restful/accounts")
+@RequestMapping("/restful")
 public class AccountController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class AccountController {
     /**
      * 根据用户名称获取用户详情
      */
-    @GetMapping("/{username}")
+    @GetMapping("/accounts/{username}")
     // @PreAuthorize("#oauth2.hasAnyScope('SERVICE','BROWSER')")
     public Account getUser(@PathVariable("username") String username) {
         return service.findAccountByUsername(username);
@@ -35,8 +35,8 @@ public class AccountController {
     /**
      * 创建新的用户
      */
-    @PostMapping("/")
-    public String createUser(@Valid @UniqueAccount Account user) {
+    @PostMapping("/accounts")
+    public String createUser(@Valid @UniqueAccount @RequestBody Account user) {
         service.createAccount(user);
         return CommonResponse.success();
     }
@@ -44,7 +44,7 @@ public class AccountController {
     /**
      * 更新用户信息
      */
-    @PutMapping("/")
+    @PutMapping("/accounts")
     // @PreAuthorize("#oauth2.hasAnyScope('BROWSER')")
     public String updateUser(@Valid @AuthenticatedAccount @NotConflictAccount Account user) {
         service.updateAccount(user);
@@ -53,11 +53,7 @@ public class AccountController {
 
     @GetMapping("/hello")
     public String hello() {
-        boolean b = false;
-        test(b);
         return "hello";
     }
 
-    public void test(@Valid @AssertTrue boolean b) {
-    }
 }

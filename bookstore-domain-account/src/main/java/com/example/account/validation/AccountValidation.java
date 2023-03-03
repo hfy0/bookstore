@@ -1,8 +1,8 @@
 package com.example.account.validation;
 
 import com.example.account.mapper.ud.AccountUDMapper;
-import org.example.domain.account.Account;
-import org.example.domain.security.AuthenticAccount;
+import com.example.domain.account.Account;
+import com.example.domain.security.AuthenticAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,6 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
-
 
 /**
  * 用户对象校验器（注解对应的校验器）

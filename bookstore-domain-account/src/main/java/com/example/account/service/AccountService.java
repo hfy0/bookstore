@@ -1,9 +1,9 @@
 package com.example.account.service;
 
 import com.example.account.mapper.ud.AccountUDMapper;
-import org.example.domain.account.Account;
+import com.example.domain.account.Account;
 import com.example.account.mapper.AccountMapper;
-import org.example.infrastructure.Encryption;
+import com.example.infrastructure.security.Encryption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,8 @@ public class AccountService {
     @Autowired
     private AccountUDMapper udMapper;
 
-    private Encryption encoder = new Encryption();
+    @Autowired
+    private Encryption encoder;
 
     public void createAccount(Account account) {
         account.setPassword(encoder.encode(account.getPassword()));
@@ -31,5 +32,4 @@ public class AccountService {
     public void updateAccount(Account account) {
         mapper.updateByPrimaryKeySelective(account);
     }
-
 }

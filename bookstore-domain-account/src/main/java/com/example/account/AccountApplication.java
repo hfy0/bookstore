@@ -12,9 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @ComponentScan(basePackages = "com.example")
 @MapperScan(value = "com.example.account.mapper")
-// @SpringBootApplication
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
-// 添加 security 依赖后出现登录认证
+@SpringBootApplication
 public class AccountApplication {
 
     public static void main(String[] args) {
