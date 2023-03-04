@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.warehouse.mapper.ud.SpecificationUDMapper">
+    <resultMap id="BaseResultMap" type="com.example.domain.warehouse.Specification">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="item" jdbcType="VARCHAR" property="item" />
+        <result column="value" jdbcType="VARCHAR" property="value" />
+        <result column="product_id" jdbcType="INTEGER" property="productId" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, item, value, product_id
+    </sql>
+
+    <insert id="saveAll" keyColumn="id" keyProperty="id" parameterType="com.example.domain.warehouse.Specification" useGeneratedKeys="true">
+        insert into specification (item, value, product_id)
+        values
+        <foreach collection="list" item="o" separator=",">
+            (
+             #{o.item,jdbcType=VARCHAR},
+             #{o.value,jdbcType=VARCHAR},
+             #{o.productId,jdbcType=INTEGER}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findByProductId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from specification
+        where product_id = #{productId,jdbcType=INTEGER}
+    </select>
+
+
+
+</mapper>
