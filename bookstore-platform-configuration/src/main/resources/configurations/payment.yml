@@ -7,19 +7,10 @@ database: mysql
 
 spring:
   datasource:
-    schema: "classpath:db/${database}/schema.sql"
-    data: "classpath:db/${database}/data.sql"
     sql-script-encoding: UTF-8
     url: "jdbc:mysql://127.0.01:3306/bookstore?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC"
     username: "root"
     password: "root"
-    # 不进行初始化
-    initialization-mode: NEVER
-  jpa:
-    show-sql: false
-    hibernate:
-      ddl-auto: none
-    open-in-view: false
   resources:
     chain:
       compressed: true
@@ -27,11 +18,19 @@ spring:
     cache:
       period: 86400
 
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    # 输出执行的 SQL 语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    use-generated-keys: true
+    # 开启驼峰命名自动映射
+    map-underscore-to-camel-case: true
+
 security:
   oauth2:
     client:
       # OAuth的ClientID和ClientSecret是写在OAuthClientDetailsService中的
-      # 实际生产中要考虑好如何获取验证服务器的Endpoint、动态增加微服务客户端、如何分发客户端密钥等问题，而在演示工程中并不关注这些
       clientId: payment
       clientSecret: payment_secret
       accessTokenUri: http://${AUTH_HOST:localhost}:${AUTH_PORT:8301}/oauth/token
