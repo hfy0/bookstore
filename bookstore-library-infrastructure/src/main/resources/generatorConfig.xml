@@ -1,0 +1,60 @@
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+    <!-- 数据库驱动:选择你的本地硬盘上面的数据库驱动包-->
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <!--        <plugin type="generator.MysqlPaginationPlugin" />-->
+        <!--        <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />-->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+
+        <!-- 自定义的注释规则，继承 DefaultCommentGenerator 重写 一些方法 -->
+        <!--        <commentGenerator type="org.mybatis.generator.internal.DefaultCommentGenerator">-->
+        <commentGenerator>
+            <!-- 是否去除自动生成日期的注释 true：是 ： false:否 -->
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除所有自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+            <!-- 是否添加数据库内的注释 true：是 ： false:否 -->
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+
+        <!--数据库链接URL，用户名、密码 -->
+        <jdbcConnection
+                driverClass="com.mysql.cj.jdbc.Driver"
+                connectionURL="jdbc:mysql://127.0.01:3306/bookstore?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=UTC"
+                userId="root" password="root">
+        </jdbcConnection>
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- 生成模型的包名和位置-->
+        <javaModelGenerator targetPackage="org.example.domain"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- 生成映射文件的包名和位置-->
+        <sqlMapGenerator targetPackage="mapper"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- 生成DAO的包名和位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="org.example.mapper"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!-- 这里用的通配符匹配全部的表，另外所有表都有自动增长的id字段。如果不是所有表的配置都一样，可以做针对性的配置。 -->
+        <table tableName="product" schema="bookstore" enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <!--插入之后能够得到主键ID-->
+            <generatedKey column="ID" sqlStatement="JDBC"/>
+        </table>
+    </context>
+</generatorConfiguration>
