@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.payment.mapper.PaymentMapper">
+  <resultMap id="BaseResultMap" type="com.example.domain.payment.Payment">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="pay_id" jdbcType="VARCHAR" property="payId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="total_price" jdbcType="DECIMAL" property="totalPrice" />
+    <result column="expires" jdbcType="INTEGER" property="expires" />
+    <result column="payment_link" jdbcType="VARCHAR" property="paymentLink" />
+    <result column="pay_state" jdbcType="INTEGER" property="payState" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pay_id, create_time, total_price, expires, payment_link, pay_state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from payment
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from payment
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.example.domain.payment.Payment" useGeneratedKeys="true">
+    insert into payment (pay_id, create_time, total_price, 
+      expires, payment_link, pay_state
+      )
+    values (#{payId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{totalPrice,jdbcType=DECIMAL}, 
+      #{expires,jdbcType=INTEGER}, #{paymentLink,jdbcType=VARCHAR}, #{payState,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.example.domain.payment.Payment" useGeneratedKeys="true">
+    insert into payment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="payId != null">
+        pay_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="totalPrice != null">
+        total_price,
+      </if>
+      <if test="expires != null">
+        expires,
+      </if>
+      <if test="paymentLink != null">
+        payment_link,
+      </if>
+      <if test="payState != null">
+        pay_state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="payId != null">
+        #{payId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totalPrice != null">
+        #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="expires != null">
+        #{expires,jdbcType=INTEGER},
+      </if>
+      <if test="paymentLink != null">
+        #{paymentLink,jdbcType=VARCHAR},
+      </if>
+      <if test="payState != null">
+        #{payState,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.domain.payment.Payment">
+    update payment
+    <set>
+      <if test="payId != null">
+        pay_id = #{payId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totalPrice != null">
+        total_price = #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="expires != null">
+        expires = #{expires,jdbcType=INTEGER},
+      </if>
+      <if test="paymentLink != null">
+        payment_link = #{paymentLink,jdbcType=VARCHAR},
+      </if>
+      <if test="payState != null">
+        pay_state = #{payState,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.domain.payment.Payment">
+    update payment
+    set pay_id = #{payId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      total_price = #{totalPrice,jdbcType=DECIMAL},
+      expires = #{expires,jdbcType=INTEGER},
+      payment_link = #{paymentLink,jdbcType=VARCHAR},
+      pay_state = #{payState,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
