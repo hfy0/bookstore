@@ -47,7 +47,7 @@ public class ProductController {
     @PutMapping("/products")
     @RolesAllowed(Role.ADMIN)
     @PreAuthorize("#oauth2.hasAnyScope('BROWSER')")
-    public String updateProduct(@Valid Product product) {
+    public String updateProduct(@Valid @RequestBody Product product) {
         service.updateProduct(product);
         return CommonResponse.success();
     }

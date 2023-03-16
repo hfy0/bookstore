@@ -17,6 +17,15 @@ spring:
       cache: true
     cache:
       period: 86400
+  redis:
+    cluster:
+      nodes:
+        - 101.43.205.127:6360
+        - 101.43.205.127:6370
+        - 101.43.205.127:6380
+        - 101.43.205.127:6361
+        - 101.43.205.127:6371
+        - 101.43.205.127:6381
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml

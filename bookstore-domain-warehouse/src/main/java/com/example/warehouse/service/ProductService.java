@@ -1,5 +1,6 @@
 package com.example.warehouse.service;
 
+import com.example.util.RedisKeyUtil;
 import com.example.warehouse.mapper.ProductMapper;
 import com.example.warehouse.mapper.SpecificationMapper;
 import com.example.warehouse.mapper.ud.ProductUDMapper;
@@ -9,8 +10,11 @@ import com.example.domain.warehouse.Specification;
 import com.example.dto.Item;
 import com.example.dto.ProductInfo;
 import com.example.dto.Settlement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +29,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class ProductService {
+    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
+
 
     @Autowired
     private ProductMapper productMapper;
@@ -37,6 +43,9 @@ public class ProductService {
 
     @Autowired
     private SpecificationUDMapper specificationUDMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 根据结算单中货物的ID，填充货物的完整信息到结算单对象上
@@ -68,13 +77,22 @@ public class ProductService {
      * 获取仓库中指定的货物信息
      */
     public ProductInfo getProduct(Integer id) {
-        Product product = productMapper.selectByPrimaryKey(id);
-        ProductInfo productInfo = new ProductInfo();
-        BeanUtils.copyProperties(product, productInfo);
+        ProductInfo productInfo = (ProductInfo) redisTemplate.opsForHash().get(RedisKeyUtil.getBookInfosKey(), String.valueOf(id));
 
-        // 设置商品规格
-        List<Specification> specifications = specificationUDMapper.findByProductId(product.getId());
-        productInfo.setSpecifications(specifications);
+        if (productInfo == null) {
+            productInfo = new ProductInfo();
+            Product product = productMapper.selectByPrimaryKey(id);
+            BeanUtils.copyProperties(product, productInfo);
+
+            // 设置商品规格
+            List<Specification> specifications = specificationUDMapper.findByProductId(product.getId());
+            productInfo.setSpecifications(specifications);
+
+            redisTemplate.opsForHash().put(RedisKeyUtil.getBookInfosKey(), String.valueOf(id), productInfo);
+            log.info("ID为{}的书籍加入Redis缓存及系统", productInfo.getId());
+        } else {
+            log.info("从Redis缓存系统中获取ID为{}的书籍", productInfo.getId());
+        }
         return productInfo;
     }
 
