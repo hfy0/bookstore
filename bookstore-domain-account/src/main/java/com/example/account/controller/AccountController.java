@@ -7,6 +7,7 @@ import com.example.account.validation.UniqueAccount;
 import com.example.domain.account.Account;
 import com.example.infrastructure.response.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,7 +28,7 @@ public class AccountController {
      * 根据用户名称获取用户详情
      */
     @GetMapping("/accounts/{username}")
-    // @PreAuthorize("#oauth2.hasAnyScope('SERVICE','BROWSER')")
+    @PreAuthorize("#oauth2.hasAnyScope('SERVICE','BROWSER')")
     public Account getUser(@PathVariable("username") String username) {
         return service.findAccountByUsername(username);
     }
@@ -45,8 +46,8 @@ public class AccountController {
      * 更新用户信息
      */
     @PutMapping("/accounts")
-    // @PreAuthorize("#oauth2.hasAnyScope('BROWSER')")
-    public String updateUser(@Valid @AuthenticatedAccount @NotConflictAccount Account user) {
+    @PreAuthorize("#oauth2.hasAnyScope('BROWSER')")
+    public String updateUser(@Valid @AuthenticatedAccount @NotConflictAccount @RequestBody Account user) {
         service.updateAccount(user);
         return CommonResponse.success();
     }
@@ -55,5 +56,4 @@ public class AccountController {
     public String hello() {
         return "hello";
     }
-
 }

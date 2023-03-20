@@ -222,9 +222,10 @@ public class PaymentService {
      */
     public void decrease(Integer accountId, BigDecimal amount) {
         Wallet wallet = walletUDMapper.findByAccountId(accountId);
-        // 初始账户资金10000
+        // 初始账户资金 999999999
         if (wallet == null) {
-            walletMapper.insert(new Wallet(BigDecimal.valueOf(10000), accountId));
+            wallet = new Wallet(BigDecimal.valueOf(999999999), accountId);
+            walletMapper.insert(wallet);
         }
         if (wallet.getMoney().compareTo(amount) >= 0) {
             wallet.setMoney(wallet.getMoney().subtract(amount));
