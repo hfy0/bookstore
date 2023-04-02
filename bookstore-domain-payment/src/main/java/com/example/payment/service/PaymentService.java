@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Service
 @Transactional
@@ -57,6 +60,9 @@ public class PaymentService {
 
     @Resource(name = "settlement")
     private Cache settlementCache;
+
+    // 运费
+    public static final BigDecimal FEE = BigDecimal.valueOf(12);
 
     /**
      * 根据结算清单的内容执行，生成对应的支付单
@@ -106,19 +112,23 @@ public class PaymentService {
      */
     public Payment producePayment(Settlement bill) {
         // 计算订单的总价
-        BigDecimal total = BigDecimal.ZERO;
-        List<Item> items = bill.getItems();
-        for (Item item : items) {
-            Integer productId = item.getProductId();
-            Integer amount = item.getAmount();
-            stockpileService.frozen(productId, amount);
+        BigDecimal total = bill.getItems().stream().map(new Function<Item, BigDecimal>() {
+            @Override
+            public BigDecimal apply(Item item) {
+                Integer productId = item.getProductId();
+                Integer amount = item.getAmount();
 
-            BigDecimal money = bill.productMap.get(productId).getPrice().multiply(BigDecimal.valueOf(amount));
-            // 注意这里要累计。total.add(money)是+不是+=
-            total = total.add(money);
-        }
-        // 12元固定运费，客户端写死的，这里陪着演一下，避免总价对不上
-        total = total.add(BigDecimal.valueOf(12));
+                stockpileService.frozen(productId, amount);
+
+                return bill.productMap.get(productId).getPrice().multiply(BigDecimal.valueOf(amount));
+            }
+        }).reduce(BigDecimal.ZERO, new BinaryOperator<BigDecimal>() {
+            @Override
+            public BigDecimal apply(BigDecimal bigDecimal, BigDecimal bigDecimal2) {
+                return bigDecimal.add(bigDecimal2);
+            }
+        }).add(FEE);
+        // 12元固定运费
 
         Payment payment = new Payment(total, DEFAULT_PRODUCT_FROZEN_EXPIRES);
         paymentMapper.insert(payment);
@@ -193,12 +203,15 @@ public class PaymentService {
      */
     private void accomplishSettlement(PayStatus endState, String payId) {
         Settlement settlement = (Settlement) Objects.requireNonNull(Objects.requireNonNull(settlementCache.get(payId)).get());
-        settlement.getItems().forEach(i -> {
-            if (PayStatus.PAYED.equals(endState)) {
-                stockpileService.decrease(i.getProductId(), i.getAmount());
-            } else {
-                // 其他状态，无论是TIMEOUT还是CANCEL，都进行解冻
-                stockpileService.thawed(i.getProductId(), i.getAmount());
+        settlement.getItems().forEach(new Consumer<Item>() {
+            @Override
+            public void accept(Item item) {
+                if (PayStatus.PAYED.equals(endState)) {
+                    stockpileService.decrease(item.getProductId(), item.getAmount());
+                } else {
+                    // 其他状态，无论是TIMEOUT还是CANCEL，都进行解冻
+                    stockpileService.thawed(item.getProductId(), item.getAmount());
+                }
             }
         });
     }
@@ -208,11 +221,14 @@ public class PaymentService {
      */
     public void rollbackSettlement(PayStatus endState, String payId) {
         Settlement settlement = (Settlement) Objects.requireNonNull(Objects.requireNonNull(settlementCache.get(payId)).get());
-        settlement.getItems().forEach(i -> {
-            if (PayStatus.PAYED.equals(endState)) {
-                stockpileService.increase(i.getProductId(), i.getAmount());
-            } else {
-                stockpileService.frozen(i.getProductId(), i.getAmount());
+        settlement.getItems().forEach(new Consumer<Item>() {
+            @Override
+            public void accept(Item item) {
+                if (PayStatus.PAYED.equals(endState)) {
+                    stockpileService.increase(item.getProductId(), item.getAmount());
+                } else {
+                    stockpileService.frozen(item.getProductId(), item.getAmount());
+                }
             }
         });
     }
